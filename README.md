@@ -20,7 +20,7 @@ Setting a lifetime on the `roundcube_sessauth` solves this by giving the browser
  1. **Manipulate the lifetime of the `roundcube_sessauth` cookie in the browser, preventing it from getting deleted.** (This works without changing Roundcube's code, but has to be done manually after each login, because Roundcube sets `roundcube_sessauth` as a session cookie on each login.)
  2. **Use this patch to make the `roundcube_sessauth` cookie's lifetime configurable in Roundcube.**
 ## How it works
-**This patch adds a config option named `cookie_lifetime`, defined in minutes.** When Roundcube sets the `roundcube_sessauth` cookie on login, it adds this number of minutes to the current time to set the expiration time of the cookie. When this time is reached, the browser deletes the cookie, effectively logging the user out.
+**This patch adds a config option named `cookie_lifetime`, defined in minutes.** When Roundcube sets the `roundcube_sessauth` cookie on login, it adds this number of minutes to the current time to set the expiration time of the cookie. When this time is reached, the browser deletes the cookie, effectively logging the user out. (The same lifetime is set on the `roundcube_sessid` cookie holding the session id.)
 
 If set to 0, the cookie is set as a session cookie. This is the default value of this new config option, and mirrors Roundcube's unpatched default behavior.
 
