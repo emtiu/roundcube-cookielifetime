@@ -1,22 +1,22 @@
-# patches to Roundcube webmail for configurable login cookie lifetime
+# patching Roundcube webmail for configurable login cookie lifetime
 
 There's [been](https://github.com/roundcube/roundcubemail/issues/5050) [considerable](https://github.com/roundcube/roundcubemail/pull/7709) [interest](https://github.com/roundcube/roundcubemail/issues/7865) [over](https://github.com/roundcube/roundcubemail/issues/7251) [the](https://packagist.org/packages/texxasrulez/persistent_login) [years](http://lists.roundcube.net/pipermail/dev/2007-August/005317.html) in configuring the lifetime of Roundcube's login cookies. However, such a feature is [not going into Roundcube anytime soon](https://github.com/roundcube/roundcubemail/issues/7865#issuecomment-770343039).
 ## How Roundcube's default session lifetime management works
-*(incomplete description, considering only aspects affected by these patches)*
+*(incomplete description, considering only aspects affected by this patch)*
 
 The `session_lifetime` config option defines how many minutes may pass without a user having Roundcube open/reachable before the server considers their session expired and the user is logged out.
 
 Also, Roundcube sets a cookie named `roundcube_sessauth` (by default, the name is configurable by the `session_auth_name` config option). If the browser does not present this cookie when accessing Roundcube, the user is logged out.
 
-Roundcube hardcodes the lifetime of this cookie as 0, meaning the browser considers it a *"session cookie"*. Browsers delete session cookies on exit.
+Roundcube hardcodes the lifetime of this cookie as 0, meaning the browser considers it a *"session cookie"*. Browsers delete session cookies on quit/exit.
 
 All of this means that after login, the following situations lead to a user being logged out automatically:
 - The user has closed Roundcube/lost the connection, and the number of minutes defined in the `session_lifetime` config option has passed without the user opening Roundcube again.
-- The user's browser exits, deleting the `roundcube_sessauth` cookie.
+- The user's browser quits, deleting the `roundcube_sessauth` cookie.
 ## What's the problem? / Why this patch?
-Some users want their session to stay alive even when they close their browsers. Also, consider that smartphone browsers don't actually ever *exit* in any predictable way, which means that users of Roundcube on a smartphone may get logged out unpredictably at any time.
+Some users want their session to stay alive even when they close their browsers. Also, consider that smartphone browsers don't actually ever *quit* in any predictable way, which means that users of Roundcube on a smartphone may get logged out unpredictably at any time.
 
-There are two ways to achieve this:
+Setting a lifetime on the `roundcube_sessauth` solves this by giving the browser a defined time until which to keep the cookie, regardless of if or when the browser quits. There are two ways to achieve this:
  1. **Manipulate the lifetime of the `roundcube_sessauth` cookie in the browser, preventing it from getting deleted.** (This works without changing Roundcube's code, but has to be done manually after each login, because Roundcube sets `roundcube_sessauth` as a session cookie on each login.)
  2. **Use this patch to make the `roundcube_sessauth` cookie's lifetime configurable in Roundcube.**
 ## How it works
