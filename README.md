@@ -24,7 +24,7 @@ Setting a lifetime on the `roundcube_sessauth` solves this by giving the browser
 
 If set to 0, the cookie is set as a session cookie. This is the default value of this new config option, and mirrors Roundcube's unpatched default behavior.
 
-Note that whatever the `cookie_lifetime` set for the browser, sessions always expire after closing Roundcube when the `session_lifetime` (as tracked by the server) has expired. Therefore, it makes no sense to set a `cookie_lifetime` longer than the `session_lifetime`.
+Note that whatever the `cookie_lifetime` set for the browser, sessions always expire when Roundcube hasn't been opened for the time specified in `session_lifetime` (as tracked by the server). Therefore, to take advantage of a long `cookie_lifetime`, Roundcube must be opened at least once every `session_lifetime`. (Sounds confusing, but the examples below make it clear.)
 
 With this patch, a user will be automatically logged out in the following situations:
 - The number of minutes defined in `cookie_lifetime` has passed since the last login.
