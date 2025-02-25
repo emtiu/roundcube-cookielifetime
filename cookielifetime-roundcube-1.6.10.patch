@@ -52,3 +52,4 @@ diff -ru roundcubemail/program/lib/Roundcube/rcube_session.php roundcubemail-coo
 +        rcube_utils::setcookie($this->cookiename, $this->cookie, $expiration);
          $_COOKIE[$this->cookiename] = $this->cookie;
      }
+
