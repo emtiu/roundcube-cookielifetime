@@ -1,7 +1,7 @@
 diff -ru roundcubemail/config/defaults.inc.php roundcubemail-cookielifetime/config/defaults.inc.php
---- roundcubemail/config/defaults.inc.php	2022-06-26 22:26:57.000000000 +0200
-+++ roundcubemail-cookielifetime/config/defaults.inc.php	2022-06-27 13:46:56.459451986 +0200
-@@ -582,9 +582,13 @@
+--- roundcubemail/config/defaults.inc.php	2026-05-10 08:37:10.000000000 +0200
++++ roundcubemail-cookielifetime/config/defaults.inc.php	2026-05-19 21:40:52.431567962 +0200
+@@ -650,9 +650,13 @@
  // 0 - hide product name and version number, 1 - show product name only, 2 - show product name and version number
  $config['display_product_info'] = 1;
  
@@ -17,18 +17,18 @@ diff -ru roundcubemail/config/defaults.inc.php roundcubemail-cookielifetime/conf
  $config['session_domain'] = '';
  
 diff -ru roundcubemail/program/lib/Roundcube/rcube.php roundcubemail-cookielifetime/program/lib/Roundcube/rcube.php
---- roundcubemail/program/lib/Roundcube/rcube.php	2022-06-26 22:26:58.000000000 +0200
-+++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube.php	2022-06-27 13:46:56.459451986 +0200
-@@ -459,6 +459,7 @@
-         $sess_path     = $this->config->get('session_path');
+--- roundcubemail/program/lib/Roundcube/rcube.php	2026-05-10 08:37:11.000000000 +0200
++++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube.php	2026-05-19 21:40:52.431567962 +0200
+@@ -460,6 +460,7 @@
+         $sess_path = $this->config->get('session_path');
          $sess_samesite = $this->config->get('session_samesite');
-         $lifetime      = $this->config->get('session_lifetime', 0) * 60;
-+        $c_lifetime    = $this->config->get('cookie_lifetime', 0) * 60;
-         $is_secure     = $this->config->get('use_https') || rcube_utils::https_check();
+         $lifetime = $this->config->get('session_lifetime', 0) * 60;
++        $c_lifetime = $this->config->get('cookie_lifetime', 0) * 60;
+         $is_secure = rcube_utils::https_check();
  
          // set session domain
 @@ -479,8 +480,7 @@
-             ini_set('session.gc_maxlifetime', $lifetime * 2);
+             ini_set('session.gc_maxlifetime', $lifetime);
          }
  
 -        // set session cookie lifetime so it never expires (#5961)
@@ -38,16 +38,16 @@ diff -ru roundcubemail/program/lib/Roundcube/rcube.php roundcubemail-cookielifet
          ini_set('session.name', $sess_name ?: 'roundcube_sessid');
          ini_set('session.use_cookies', 1);
 diff -ru roundcubemail/program/lib/Roundcube/rcube_session.php roundcubemail-cookielifetime/program/lib/Roundcube/rcube_session.php
---- roundcubemail/program/lib/Roundcube/rcube_session.php	2022-06-26 22:26:58.000000000 +0200
-+++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube_session.php	2022-06-27 13:46:56.463451998 +0200
-@@ -713,8 +713,11 @@
+--- roundcubemail/program/lib/Roundcube/rcube_session.php	2026-05-10 08:37:11.000000000 +0200
++++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube_session.php	2026-05-19 21:40:52.431567962 +0200
+@@ -735,8 +735,11 @@
       */
      public function set_auth_cookie()
      {
 +        $clifetime = $this->config->get('cookie_lifetime', 0) * 60;
 +        if (!$clifetime) { $expiration = 0; }
 +        else { $expiration = time() + $clifetime; }
-         $this->cookie = $this->_mkcookie($this->now);
+         $this->cookie = $this->mkcookie($this->now);
 -        rcube_utils::setcookie($this->cookiename, $this->cookie, 0);
 +        rcube_utils::setcookie($this->cookiename, $this->cookie, $expiration);
          $_COOKIE[$this->cookiename] = $this->cookie;
