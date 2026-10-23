@@ -1,6 +1,6 @@
 diff -ru roundcubemail/config/defaults.inc.php roundcubemail-cookielifetime/config/defaults.inc.php
---- roundcubemail/config/defaults.inc.php	2026-05-10 08:37:10.000000000 +0200
-+++ roundcubemail-cookielifetime/config/defaults.inc.php	2026-05-19 21:40:52.431567962 +0200
+--- roundcubemail/config/defaults.inc.php	2026-10-19 08:53:25.000000000 +0200
++++ roundcubemail-cookielifetime/config/defaults.inc.php	2026-10-23 16:29:44.827634676 +0200
 @@ -650,9 +650,13 @@
  // 0 - hide product name and version number, 1 - show product name only, 2 - show product name and version number
  $config['display_product_info'] = 1;
@@ -17,8 +17,8 @@ diff -ru roundcubemail/config/defaults.inc.php roundcubemail-cookielifetime/conf
  $config['session_domain'] = '';
  
 diff -ru roundcubemail/program/lib/Roundcube/rcube.php roundcubemail-cookielifetime/program/lib/Roundcube/rcube.php
---- roundcubemail/program/lib/Roundcube/rcube.php	2026-05-10 08:37:11.000000000 +0200
-+++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube.php	2026-05-19 21:40:52.431567962 +0200
+--- roundcubemail/program/lib/Roundcube/rcube.php	2026-10-19 08:53:25.000000000 +0200
++++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube.php	2026-10-23 16:29:44.831634717 +0200
 @@ -460,6 +460,7 @@
          $sess_path = $this->config->get('session_path');
          $sess_samesite = $this->config->get('session_samesite');
@@ -38,9 +38,9 @@ diff -ru roundcubemail/program/lib/Roundcube/rcube.php roundcubemail-cookielifet
          ini_set('session.name', $sess_name ?: 'roundcube_sessid');
          ini_set('session.use_cookies', 1);
 diff -ru roundcubemail/program/lib/Roundcube/rcube_session.php roundcubemail-cookielifetime/program/lib/Roundcube/rcube_session.php
---- roundcubemail/program/lib/Roundcube/rcube_session.php	2026-05-10 08:37:11.000000000 +0200
-+++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube_session.php	2026-05-19 21:40:52.431567962 +0200
-@@ -735,8 +735,11 @@
+--- roundcubemail/program/lib/Roundcube/rcube_session.php	2026-10-19 08:53:25.000000000 +0200
++++ roundcubemail-cookielifetime/program/lib/Roundcube/rcube_session.php	2026-10-23 16:29:44.831634717 +0200
+@@ -733,8 +733,11 @@
       */
      public function set_auth_cookie()
      {
